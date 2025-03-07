@@ -17,7 +17,6 @@ class UrlController {
     }
 
     const shortUrl = UrlService.generateShortUrl();
-    console.log("Short URL: ", shortUrl);
     await Url.create({ shortUrl, longUrl: url }); // Save to DB
 
     res.json({ url: shortUrl });
