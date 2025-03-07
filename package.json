@@ -4,7 +4,7 @@
   "main": "app.ts",
   "scripts": {
     "lint": "eslint . --ext .ts && npx prettier --write .",
-    "build": "tsc",
+    "build": "npm i && tsc",
     "dev": "tsx watch src/app.ts",
     "start": "node dist/app.js",
     "test": "jest"
