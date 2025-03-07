@@ -7,10 +7,9 @@ const router = Router();
 router.post("/", UrlController.createShortUrl);
 
 // Given a short URL, redirect to the original URL
-router.get("/:shortUrl", UrlController.redirectToOriginalUrl);
+router.get("/:shortUrl", UrlController.redirectToLongUrl);
 
 // GET info about the short URL such as click count and long url
 router.get("/stats/:shortUrl", UrlController.getUrlStats);
-
 
 export default router;

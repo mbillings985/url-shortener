@@ -1,31 +1,52 @@
 import { Request, Response } from "express";
+import UrlService from "../services/urlService";
+import Url from "../models/url";
 
 class UrlController {
-
-  public createShortUrl(req: Request, res: Response): void {
+  public async createShortUrl(req: Request, res: Response): Promise<void> {
     const { url } = req.body;
     if (!url) {
-      res.status(400).json({ error: 'URL is required' });
+      res.status(400).json({ error: "URL is required" });
       return;
     }
 
-    // TODO: Create short URL
-    res.json({url: 'shortURL'});
+    const existingUrl = await Url.findOne({ where: { longUrl: url } });
+    if (existingUrl) {
+      res.json({ url: existingUrl.shortUrl });
+      return;
+    }
+
+    const shortUrl = UrlService.generateShortUrl();
+    console.log("Short URL: ", shortUrl);
+    await Url.create({ shortUrl, longUrl: url }); // Save to DB
+
+    res.json({ url: shortUrl });
   }
 
-
-  public redirectToOriginalUrl(req: Request, res: Response): void {
+  public async redirectToLongUrl(req: Request, res: Response): Promise<void> {
     const { shortUrl } = req.params;
 
-    // TODO: Retrieve long URL from db and redirect
-    res.redirect("longUrl");
+    const data = await Url.findByPk(shortUrl);
+    if (!data) {
+      res.status(404).json({ error: "Short URL not found" });
+      return;
+    }
+    data.clicks += 1;
+    await data.save();
+
+    res.redirect(data.longUrl);
   }
 
-  public getUrlStats(req: Request, res: Response): void {
+  public async getUrlStats(req: Request, res: Response): Promise<void> {
     const { shortUrl } = req.params;
 
-    // TODO: Retrieve click count and long URL from DB
-    res.json({ longUrl: 'longUrl', clicks: 'clicks' });
+    const data = await Url.findByPk(shortUrl);
+    if (!data) {
+      res.status(404).json({ error: "Short URL not found" });
+      return;
+    }
+
+    res.json({ longUrl: data.longUrl, clicks: data.clicks });
   }
 }
 

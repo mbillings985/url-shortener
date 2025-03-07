@@ -1,7 +1,7 @@
 import express from "express";
 import urlRoutes from "./routes/url";
+import "./config/database";
 
-const PORT = 3000;
 const baseUrl = "http://localhost:3000";
 
 const app = express();
@@ -9,9 +9,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/urls", urlRoutes);
+app.use("/", urlRoutes);
 
-app.listen(PORT, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log(`Server running on ${baseUrl}`);
-  console.log(`API running on ${baseUrl}/api/urls`);
 });
